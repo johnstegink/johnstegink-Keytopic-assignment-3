@@ -1,0 +1,358 @@
+/* OU.nl inspired styling */
+/* Color palette based on Open Universiteit branding */
+:root {
+    --ou-red: #C8102E;
+    --ou-dark-red: #A00D24;
+    --ou-light-red: #E31E3B;
+    --ou-light-gray: #F5F5F5;
+    --ou-gray: #666666;
+    --ou-border: #E0E0E0;
+    --white: #FFFFFF;
+    --success: #28A745;
+    --error: #DC3545;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: var(--ou-light-gray);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header Styling */
+.ou-header {
+    background-color: var(--ou-red);
+    color: var(--white);
+    padding: 1.5rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.ou-logo {
+    height: 70px;
+    width: 70px;
+    background-color: var(--white);
+    padding: 0.5rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    object-fit: contain;
+}
+
+
+.site-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.site-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+/* Main Content */
+.main-content {
+    padding: 2rem 0;
+    min-height: calc(100vh - 200px);
+}
+
+/* Feed Input Section */
+.feed-input-section {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.feed-input-section h2 {
+    color: var(--ou-red);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.feed-form {
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.form-control {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid var(--ou-border);
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--ou-red);
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--ou-red);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--ou-dark-red);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(200, 16, 46, 0.3);
+}
+
+/* Example Feeds */
+.example-feeds {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ou-border);
+    color: var(--ou-gray);
+    font-size: 0.9rem;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: var(--ou-red);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.link-button:hover {
+    color: var(--ou-dark-red);
+}
+
+/* Feed Info */
+.feed-info {
+    background-color: var(--white);
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--ou-red);
+}
+
+.feed-info h3 {
+    color: var(--ou-red);
+    margin-bottom: 0.5rem;
+}
+
+.article-count {
+    color: var(--ou-gray);
+    font-size: 0.9rem;
+}
+
+/* Articles Grid */
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Article Card */
+.article-card {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.article-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.article-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.article-title a {
+    color: var(--ou-red);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.article-title a:hover {
+    color: var(--ou-dark-red);
+}
+
+.article-subtitle {
+    color: var(--ou-light-red);
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-style: italic;
+    margin-bottom: 0.75rem;
+    margin-top: -0.5rem;
+}
+
+.article-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--ou-gray);
+}
+
+.article-date::before {
+    content: "📅 ";
+}
+
+.article-author::before {
+    content: "✍️ ";
+}
+
+.article-summary {
+    color: #555;
+    margin-bottom: 1rem;
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.read-more {
+    color: var(--ou-red);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.3s;
+    align-self: flex-start;
+}
+
+.read-more:hover {
+    color: var(--ou-dark-red);
+}
+
+/* Alerts */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid;
+}
+
+.alert-error {
+    background-color: #FFE5E9;
+    border-color: var(--error);
+    color: #721C24;
+}
+
+.alert-success {
+    background-color: #E8F5E9;
+    border-color: var(--success);
+    color: #155724;
+}
+
+/* No Articles Message */
+.no-articles {
+    background-color: var(--white);
+    padding: 3rem;
+    border-radius: 8px;
+    text-align: center;
+    color: var(--ou-gray);
+}
+
+/* Footer */
+.ou-footer {
+    background-color: var(--ou-dark-red);
+    color: var(--white);
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: auto;
+}
+
+.ou-footer p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group {
+        flex-direction: column;
+    }
+
+    .site-title {
+        font-size: 1.4rem;
+    }
+
+    .feed-input-section {
+        padding: 1.5rem;
+    }
+
+    .header-content {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .ou-logo {
+        height: 100px;
+        width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .article-card {
+        border-radius: 4px;
+    }
+}
+

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}De-Sensationalizer - Open Universiteit{% endblock %}
+
+{% block content %}
+<div class="feed-input-section">
+    <h2>Voer een RSS-feed-URL in</h2>
+    <form method="POST" action="{{ url_for('rss.index') }}" class="feed-form">
+        <div class="form-group">
+            <input
+                type="url"
+                name="feed_url"
+                id="feed_url"
+                class="form-control"
+                placeholder="https://example.com/feed.rss"
+                value="{{ feed_url }}"
+                required
+            >
+            <button type="submit" class="btn btn-primary">Feed ophalen</button>
+        </div>
+    </form>
+
+    <div class="example-feeds">
+        <p><strong>Voorbeeldfeeds:</strong></p>
+        <form method="POST" action="{{ url_for('rss.index') }}" style="display: inline;">
+            <input type="hidden" name="feed_url" value="https://feeds.nos.nl/nosnieuwsalgemeen">
+            <button type="submit" class="link-button">NOS Nieuws</button>
+        </form>
+        |
+        <form method="POST" action="{{ url_for('rss.index') }}" style="display: inline;">
+            <input type="hidden" name="feed_url" value="https://www.nu.nl/rss">
+            <button type="submit" class="link-button">Nu.nl</button>
+        </form>
+        |
+        <form method="POST" action="{{ url_for('rss.index') }}" style="display: inline;">
+            <input type="hidden" name="feed_url" value="https://tweakers.net/feeds/mixed.xml">
+            <button type="submit" class="link-button">Tweakers</button>
+        </form>
+    </div>
+</div>
+
+{% if feed_title %}
+<div class="feed-info">
+    <h3>{{ feed_title }}</h3>
+    <p class="article-count">{{ articles|length }} artikel{{ '' if articles|length == 1 else 'en' }} gevonden</p>
+</div>
+{% endif %}
+
+{% if articles %}
+<div class="articles-grid">
+    {% for article in articles %}
+    <article class="article-card">
+        <div class="article-content">
+            <h3 class="article-title">
+                <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer">
+                Gedesensationaliseerde titel komt hier
+                </a>
+            </h3>
+
+            <p class="article-subtitle">
+                {{ article.title }}
+            </p>
+
+
+            <div class="article-meta">
+                {% if article.published %}
+                    <span class="article-date">{{ article.published }}</span>
+                {% endif %}
+                {% if article.author %}
+                    <span class="article-author">{{ article.author }}</span>
+                {% endif %}
+            </div>
+
+            <p class="article-summary">{{ article.summary }}</p>
+
+            <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer" class="read-more">
+                Lees meer →
+            </a>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% elif feed_url %}
+<div class="no-articles">
+    <p>Geen artikelen gevonden in deze feed.</p>
+</div>
+{% endif %}
+
+{% endblock %}
+
