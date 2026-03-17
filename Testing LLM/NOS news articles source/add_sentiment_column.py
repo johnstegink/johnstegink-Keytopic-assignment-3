@@ -1,67 +1,61 @@
 #
 # Splits the articles in CSV files per year.
 #
-
-import csv
+import glob
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import datetime
+import pandas as pd
 
-def split_files(csv_path: Path, output_path: str) -> int:
-    # Read the CSV and write each original row to a year-specific CSV file.
-    open_files = {}
-    writers = {}
-    records_written = 0
+def add_sentiment_column(input_file, output_file):
+    """
+    Read CSV file and write data to output file.
+    
+    Args:
+        input_file: Path to the input CSV file
+        output_file: Path where the output CSV file should be saved
+    """
+    # Read the CSV file
+    df = pd.read_csv(input_file)
 
-    with csv_path.open("r", encoding="utf-8", newline="") as csv_file:
-        reader = csv.DictReader(csv_file)
-        fieldnames = reader.fieldnames
+    # Write the data to the output file
+    df.to_csv(output_file, index=False)
 
-        for line in reader:
-            article_date = datetime.datetime.strptime(line["datetime"], "%Y-%m-%d %H:%M:%S")
-            year = article_date.year
-            file_name = output_path.format(year=year)
-            target_path = csv_path.parent / file_name
 
-            # Create a new writer
-            if year not in writers:
-                output_file = target_path.open("w", encoding="utf-8", newline="")
-                open_files[year] = output_file
-                writer = csv.DictWriter(output_file, fieldnames=fieldnames)
-                writer.writeheader()
-                writers[year] = writer
 
-            # Write the original row values back to the corresponding year file.
-            writers[year].writerow(line)
-            records_written += 1
-
-    return records_written
 
 def main() -> int:
     # Load environment variables from .env so the CSV file name can be configured.
     script_dir = Path(__file__).resolve().parent
     load_dotenv()
 
-    # Read the configured input file name from the environment.
-    csv_file_name = os.environ.get("CSV_FILE_NAME_ALL_ARTICLES")
-    if not csv_file_name:
-        print("Error: CSV_FILE_NAME_ALL_ARTICLES was not found in .env or environment.")
-        return 1
 
-    # Resolve the CSV path relative to this script and validate it exists.
-    csv_path = script_dir / csv_file_name
-    if not csv_path.exists():
-        print(f"Error: file not found: {csv_path}")
-        return 1
-
-    output_path = os.environ.get("CSV_FILE_NAME_YEAR_ARTICLES")
-    if not output_path:
+    article_names = os.environ.get("CSV_FILE_NAME_YEAR_ARTICLES")
+    if not article_names:
         print("Error: CSV_FILE_NAME_YEAR_ARTICLES was not found in .env or environment.")
         return 1
 
-    records_written = split_files(csv_path, output_path)
-    print(f"Wrote {records_written} records using pattern: {output_path}")
+    output_path = os.environ.get("CSV_OUTPUT_SENTIMENT_FILE_PATH")
+    if not output_path:
+        print("Error: CSV_OUTPUT_SENTIMENT_FILE_PATH was not found in .env or environment.")
+        return 1
+
+
+    # Ensure output_path is a Path object
+    output_dir = Path(output_path)
+    os.makedirs(output_path, exist_ok=True)
+
+
+    pattern = article_names.format(year="*")
+    files = glob.glob(pattern)
+    for file in files:
+
+        # Get the filename from the input csv_path and construct the full output path
+        filename = Path(file).name
+        output_file = output_dir / filename
+
+        add_sentiment_column(file, output_file)
+        
     return 0
 
 
