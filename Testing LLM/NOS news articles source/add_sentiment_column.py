@@ -6,20 +6,41 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import pandas as pd
+from textblob import TextBlob
+from textblob_nl import PatternAnalyzer
 
 def add_sentiment_column(input_file, output_file):
     """
-    Read CSV file and write data to output file.
+    Read CSV file, add sentiment analysis columns, and write to output file.
     
     Args:
         input_file: Path to the input CSV file
-        output_file: Path where the output CSV file should be saved
+        output_file: Path where the output CSV file should be saved, tab-delimited
     """
     # Read the CSV file
     df = pd.read_csv(input_file)
+    
+    # Initialize sentiment column
+    df['sentiment'] = None
+    df['sentiment_score'] = None
+    
+    # Loop through each row and analyze sentiment
+    for index, row in df.iterrows():
+        text = row.get('title')
 
-    # Write the data to the output file
-    df.to_csv(output_file, index=False)
+        # Create TextBlob with Dutch analyzer
+        blob = TextBlob(str(text), analyzer=PatternAnalyzer())
+
+        polarity = blob.sentiment[0]
+        subjectivity = blob.sentiment[1]
+
+
+        df.at[index, 'polarity'] = polarity
+        df.at[index, 'subjectivity'] = subjectivity
+
+
+    # Write the data with sentiment columns to the output file as tab-delimited
+    df.to_csv(output_file, sep='\t', index=False)
 
 
 
@@ -51,7 +72,7 @@ def main() -> int:
     for file in files:
 
         # Get the filename from the input csv_path and construct the full output path
-        filename = Path(file).name
+        filename = Path(file.replace(".csv", ".txt")).name
         output_file = output_dir / filename
 
         add_sentiment_column(file, output_file)

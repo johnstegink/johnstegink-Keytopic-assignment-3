@@ -20,15 +20,76 @@ The title and content of features somewhat clean. Meaning extra whites spaces an
 
 Downloaded from: [Kaggle](https://www.kaggle.com/datasets/maxscheijen/dutch-news-articles)
 
-## Recordtelling met selection.py
 
-Zet de CSV-bestandsnaam in `.env`:
+## Setup Instructions
 
-`CSV_FILE_NAME=dutch-news-articles.csv`
+### 1. Download Data from Kaggle
 
-Voer daarna het script uit:
+To use this dataset, you need to download it from Kaggle [Kaggle - Dutch News Articles](https://www.kaggle.com/datasets/maxscheijen/dutch-news-articles)
+### 2. Configure Environment Variables
 
-`python3 selection.py`
+Create a `.env` file in this directory with the following variables:
 
-Het script telt het aantal records (rijen zonder header) in het opgegeven CSV-bestand.
+```env
+CSV_FILE_NAME_YEAR_ARTICLES=/path/to/articles_YYYY.csv
+CSV_OUTPUT_SENTIMENT_FILE_PATH=/path/to/output/directory
+```
+
+#### Environment Variables Explanation
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| CSV_FILE_NAME_ALL_ARTICLES=dutch-news-articles.csv | Path to the input CSV file containing all articles. | `/Users/john/Dropbox/NOS news articles source/dutch-news-articles.csv` |
+| `CSV_FILE_NAME_YEAR_ARTICLES` | Path pattern to input CSV files with a `{year}` placeholder. The script will process all files matching this pattern. | `/Users/john/Dropbox/NOS news articles source/articles_{year}.csv` |
+| `CSV_OUTPUT_SENTIMENT_FILE_PATH` | Directory path where the processed output files (with sentiment analysis) will be saved. The script creates this directory if it doesn't exist. | `/Users/john/Dropbox/NOS news articles source/output/sentiment/` |
+
+#### Example `.env` file:
+
+```env
+CSV_FILE_NAME_ALL_ARTICLES=dutch-news-articles.csv
+CSV_FILE_NAME_YEAR_ARTICLES=articles_{year}.csv
+CSV_OUTPUT_SENTIMENT_FILE_PATH=with_sentiment_analysis
+```
+
+### 3. Run the Split CSV Script
+
+Before running the sentiment analysis, split the combined dataset into yearly files:
+
+```bash
+python split_csv.py
+```
+
+**What it does:**
+- Reads the combined CSV file (`CSV_FILE_NAME_ALL_ARTICLES`)
+- Splits all articles by year based on their publication date
+- Creates separate CSV files for each year (e.g., `articles_2010.csv`, `articles_2011.csv`, etc.)
+- Writes output files according to the pattern specified in `CSV_FILE_NAME_YEAR_ARTICLES`
+
+**Output example:**
+```
+Wrote 45832 records using pattern: articles_{year}.csv
+```
+
+### 4. Run the Sentiment Analysis Script
+
+Once the data is split by year, run the sentiment analysis:
+
+```bash
+python add_sentiment_column.py
+```
+
+**What it does:**
+- Reads each yearly CSV file matching the pattern in `CSV_FILE_NAME_YEAR_ARTICLES`
+- Analyzes the sentiment of each article title using Dutch language processing (TextBlob with PatternAnalyzer)
+- Adds two new columns to each file:
+  - `polarity`: Sentiment polarity score ranging from -1 (negative) to 1 (positive)
+  - `subjectivity`: Subjectivity score ranging from 0 (objective) to 1 (subjective)
+- Saves the results as tab-delimited files to `CSV_OUTPUT_SENTIMENT_FILE_PATH`
+
+**Output files example:**
+- Input: `articles_2020.csv`
+- Output: `articles_2020.txt` (tab-delimited with sentiment columns added)
+
+
+
 
