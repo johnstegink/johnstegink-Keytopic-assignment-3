@@ -22,17 +22,17 @@ def add_sentiment_column(input_file, output_file):
     
     # Loop through each row and analyze sentiment
     for index, row in df.iterrows():
-        text = row.get('title')
+        title = row.get('title')
+        content = row.get('content')
 
         # Create TextBlob with Dutch analyzer
-        blob = TextBlob(str(text), analyzer=PatternAnalyzer())
+        blob_title = TextBlob(str(title), analyzer=PatternAnalyzer())
+        blob_content = TextBlob(str(content), analyzer=PatternAnalyzer())
 
-        polarity = blob.sentiment[0]
-        subjectivity = blob.sentiment[1]
-
-
-        df.at[index, 'polarity'] = polarity
-        df.at[index, 'subjectivity'] = subjectivity
+        df.at[index, 'title_polarity'] = blob_title.sentiment[0]
+        df.at[index, 'title_subjectivity'] = blob_title.sentiment[1]
+        df.at[index, 'content_polarity'] = blob_content.sentiment[0]
+        df.at[index, 'content_subjectivity'] = blob_content.sentiment[1]
 
 
     # Write the data with sentiment columns to the output file as tab-delimited
