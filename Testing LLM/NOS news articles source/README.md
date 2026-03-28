@@ -91,5 +91,48 @@ python add_sentiment_column.py
 - Output: `articles_2020.txt` (tab-delimited with sentiment columns added)
 
 
+### 5. Run the Clickbait De-Sensationalizer (Nieuws-Normalisator)
 
+This script uses a local LLM (Mistral via Ollama) to transform high-subjectivity headlines into mundane, bureaucratic facts.
 
+```bash
+python news_neutralizer.py
+```
+### What it does:
+
+* **Ultra-Filtering Logic:** The script scans 14 years of data (2010–2023) using an extremely strict filter to find the "purest" clickbait:
+    * **Subjectivity > 0.95:** Targets titles that are almost entirely sensationalist or opinion-based.
+    * **Polarity between -0.02 and 0.02:** Targets titles that are emotionally "flat" or neutral, effectively filtering out real tragedies or overly positive news.
+    * **Smart Fallback:** If no "Ultra" matches are found, the script automatically broadens the search to a high-sensational level (Subjectivity > 0.8 and Polarity ±0.1).
+* **AI Persona:** Adopts the persona of a humorless, emotionless Dutch official to rewrite the selected titles.
+* **Neutralization:** Strips away all sensationalism, clickbait triggers, and emotional bait, leaving only a mundane, factual description.
+* **Constraints:** * **Language:** Output is strictly in Dutch.
+    * **Length:** Limited to a maximum of 10 words.
+    * **Tone:** Factual, dry, and unintentionally funny due to the extreme lack of emotion.
+
+**Output example:**
+
+- ORIGINAL: Vanaf vandaag zonder paspoortcontrole en met euro's naar Kroatië
+- RESULT: Paspoortcontrole opgeheven bij grensovergang naar Kroatië; Euro geld in gebruik
+
+### Performance Optimization: Parallel Processing
+
+To significantly reduce processing time, the script utilizes `ThreadPoolExecutor` from the `concurrent.futures` library. 
+
+#### How it works:
+Standard Python scripts process tasks one by one (sequentially). By using a Thread Pool, the script can send multiple headlines to the Ollama API simultaneously. This is especially effective because most of the processing time is spent waiting for the local LLM to generate a response.
+
+#### Configuration:
+The speed is controlled by the `max_workers` parameter:
+```python
+with ThreadPoolExecutor(max_workers=4) as executor:
+    df_clickbait['neutral_title'] = list(executor.map(ollama_neutralizer, df_clickbait['title']))
+```
+> **Note:** The script is currently configured to process a sample of 10 articles for testing purposes (`df_clickbait.head(10)`). This limit can be increased or removed to process the full dataset once the configuration is verified.
+
+**Requirements**
+- Python 3.x
+
+- Pandas & python-dotenv
+
+- Ollama: Must be running locally with the Mistral model installed.
