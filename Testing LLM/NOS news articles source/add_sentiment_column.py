@@ -1,5 +1,5 @@
 #
-# Splits the articles in CSV files per year.
+# Add a polarity and subjectivity column
 #
 import glob
 import os
@@ -19,10 +19,6 @@ def add_sentiment_column(input_file, output_file):
     """
     # Read the CSV file
     df = pd.read_csv(input_file)
-    
-    # Initialize sentiment column
-    df['sentiment'] = None
-    df['sentiment_score'] = None
     
     # Loop through each row and analyze sentiment
     for index, row in df.iterrows():

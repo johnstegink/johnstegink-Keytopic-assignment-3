@@ -60,3 +60,5 @@ Thumbs.db
 /Testing LLM/NOS news articles source/articles_2022.csv
 /Testing LLM/NOS news articles source/articles_2023.csv
 /Testing LLM/NOS news articles source/with_sentiment_analysis/
+/Testing LLM/NOS news articles source/with_embeddings
+/Testing LLM/NOS news articles source/test.py
