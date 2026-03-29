@@ -86,7 +86,7 @@ def process_nos_dataset():
             cols_to_use = ['title', 'subjectivity', 'polarity']
             if 'title_embedding' in available_cols:
                 cols_to_use.append('title_embedding')
-            # Also load the distance calculated by John's script
+            # Also load the distance calculated
             if 'title_text_distance' in available_cols:
                 cols_to_use.append('title_text_distance')
 
@@ -118,7 +118,7 @@ def process_nos_dataset():
             (df['title_text_distance'] >= 1.0)
             ].sort_values(by='subjectivity', ascending=False).head(10).copy()
     else:
-        # Fallback to the old sentiment-based logic if John's column is missing
+        # Fallback to the old sentiment-based logic if title_text_distance is missing
         print("Warning: 'title_text_distance' not found. Falling back to Sentiment filters...")
         df_clickbait = df[
             (df['subjectivity'] == 1.0) &
