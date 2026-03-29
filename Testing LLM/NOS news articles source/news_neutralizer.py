@@ -4,8 +4,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import ollama
 from concurrent.futures import ThreadPoolExecutor  # Added for speed
-import ast  # NEW: Required to parse the stringified list from the CSV
-import torch  # NEW: Required to rebuild the tensor for calculation
+import ast  # Required to parse the stringified list from the CSV
+import torch  # Required to rebuild the tensor for calculation
 
 # Imports for the Neutralization Check (Based on embedding method)
 from sentence_transformers import SentenceTransformer
@@ -86,7 +86,7 @@ def process_nos_dataset():
             cols_to_use = ['title', 'subjectivity', 'polarity']
             if 'title_embedding' in available_cols:
                 cols_to_use.append('title_embedding')
-            # NEW: Also load the distance calculated by John's script
+            # Also load the distance calculated by John's script
             if 'title_text_distance' in available_cols:
                 cols_to_use.append('title_text_distance')
 
@@ -142,11 +142,24 @@ def process_nos_dataset():
     # Neutralization Check (Calculate semantic distance between original and new title)
     print("Calculating Neutralization Scores (Semantic Distance)...")
 
-    # Load the model specified in .env, fallback to a fast default model
-    model_name = os.environ.get("SENTENCE_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+    # Load the model name from .env
+    model_name = os.environ.get("SENTENCE_EMBEDDING_MODEL")
 
-    # Use 'mps' to utilize the MacBook GPU for faster processing
-    embedding_model = SentenceTransformer(model_name, device='mps')
+    # Strict check: if the variable is missing, stop the execution
+    if not model_name:
+        print("Error: SENTENCE_EMBEDDING_MODEL was not found in .env or environment.")
+        return  # Exit the function early
+
+    # Detect the best available hardware for the current machine
+    if torch.backends.mps.is_available():
+        device_type = "mps"  # Apple Silicon
+    elif torch.cuda.is_available():
+        device_type = "cuda"  # Nvidia GPU
+    else:
+        device_type = "cpu"  # Fallback to standard processor
+
+    print(f"Loading embedding model: {model_name} on {device_type}...")
+    embedding_model = SentenceTransformer(model_name, device=device_type)
 
     # Initialize the new column
     df_clickbait['neutralization_distance'] = None
@@ -164,18 +177,18 @@ def process_nos_dataset():
         # Try to grab the existing title embedding from script output
         if 'title_embedding' in row and pd.notna(row['title_embedding']):
             try:
-                # Convert string "[0.1, 0.2]" back to Python list, then to MPS tensor
+                # Convert string "[0.1, 0.2]" back to Python list, then to the correct device tensor
                 orig_list = ast.literal_eval(row['title_embedding'])
-                orig_tensor = torch.tensor(orig_list, device='mps').unsqueeze(0)
+                orig_tensor = torch.tensor(orig_list, device=device_type).unsqueeze(0)
             except Exception:
-                # Fallback: re-calculate if the data formatting is broken
-                orig_tensor = embedding_model.encode(original, convert_to_tensor=True, device="mps").unsqueeze(0)
+                # Fallback: re-calculate if the data formatting is broken using dynamic device
+                orig_tensor = embedding_model.encode(original, convert_to_tensor=True, device=device_type).unsqueeze(0)
         else:
-            # Fallback: calculate if the column doesn't exist
-            orig_tensor = embedding_model.encode(original, convert_to_tensor=True, device="mps").unsqueeze(0)
+            # Fallback: calculate if the column doesn't exist using dynamic device
+            orig_tensor = embedding_model.encode(original, convert_to_tensor=True, device=device_type).unsqueeze(0)
 
-        # Calculate embedding ONLY for the newly generated title
-        neutral_tensor = embedding_model.encode(neutral, convert_to_tensor=True, device="mps").unsqueeze(0)
+        # Calculate embedding ONLY for the newly generated title using dynamic device
+        neutral_tensor = embedding_model.encode(neutral, convert_to_tensor=True, device=device_type).unsqueeze(0)
 
         # Calculate cosine similarity and the resulting distance
         cosine_sim = F.cosine_similarity(orig_tensor, neutral_tensor, dim=1)
