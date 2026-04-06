@@ -186,22 +186,21 @@ def process_nos_dataset():
         # Scenario A: Full text articles (Crawler)
         full_text_matches = df[
             (df['extraction_method'].str.startswith('full_', na=False)) &
-            (df['subjectivity'] >= 0.0) &  # Adjusted to 0.0 to match your example record
+            (df['subjectivity'] >= 0.3) &
             (df['title_text_distance'] >= 0.9)
             ]
 
         # Scenario B: RSS Summaries
         summary_matches = df[
             (df['extraction_method'] == 'rss_summary') &
-            (df['subjectivity'] >= 0.0) &
+            (df['subjectivity'] >= 0.3) &
             (df['title_text_distance'] >= 0.5)
             ]
 
         # Scenario C: Missing extraction method (NOS files)
-        # Your example has subjectivity 0.0, so I adjusted the filter to >= 0.0
         missing_method_matches = df[
             (df['extraction_method'].isna()) &
-            (df['subjectivity'] >= 0.0) &
+            (df['subjectivity'] >= 0.3) &
             (df['title_text_distance'] >= 0.9)
             ]
 
@@ -213,7 +212,7 @@ def process_nos_dataset():
         return
 
     print(f"Found {len(all_matches)} articles matching the criteria.")
-    df_clickbait = all_matches.sort_values(by='title_text_distance', ascending=False).head(30).copy()
+    df_clickbait = all_matches.sort_values(by='title_text_distance', ascending=False).head(10).copy()
 
     # STEP 3: START NEUTRALIZATION
     print(f"Starting neutralization for {len(df_clickbait)} articles...")
