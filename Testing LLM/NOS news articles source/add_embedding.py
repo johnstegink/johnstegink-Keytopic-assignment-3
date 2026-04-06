@@ -28,11 +28,13 @@ def add_embeddings(model, input_file, output_file):
 
     # Loop through each row and analyze sentiment
     for index, row in df.iterrows():
-        title = row.get('title')
-        text = row.get('text')
+        #title = row.get('title')
+        #text = row.get('text')
+        title = str(row.get('title', ''))
+        content = str(row.get('content', ''))
 
         # Create TextBlob with Dutch analyzer
-        embeddings = model.encode([title, text], convert_to_tensor=True, device="mps")
+        embeddings = model.encode([title, content], convert_to_tensor=True, device="mps")
         cosine_sim = F.cosine_similarity(embeddings[0].unsqueeze(0), embeddings[1].unsqueeze(0), dim=1)
         cosine_distance = 1 - cosine_sim
 
@@ -71,6 +73,8 @@ def main() -> int:
     os.makedirs(output_path, exist_ok=True)
 
     pattern = input_path + "/articles_*.txt"
+    # Update this line to target only 2026 files for RSS data
+    #pattern = os.path.join(input_path, "articles_*_2026-*.txt")
     files = glob.glob(pattern)
     model = SentenceTransformer(model_name, device='mps')
 

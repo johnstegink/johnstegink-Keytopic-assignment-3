@@ -18,7 +18,16 @@ def add_sentiment_column(input_file, output_file):
         output_file: Path where the output CSV file should be saved, tab-delimited
     """
     # Read the CSV file
-    df = pd.read_csv(input_file)
+    #df = pd.read_csv(input_file)
+    # Check the file extension to determine the correct separator
+    file_path = Path(input_file)
+
+    if file_path.suffix == '.csv':
+        # Load NOS files using comma separator
+        df = pd.read_csv(input_file, sep=',')
+    else:
+        # Load crawler output files using tab separator
+        df = pd.read_csv(input_file, sep='\t')
     
     # Loop through each row and analyze sentiment
     for index, row in df.iterrows():
