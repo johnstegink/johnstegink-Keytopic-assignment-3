@@ -9,12 +9,14 @@ def index():
     articles = []
     feed_url = ''
     feed_title = ''
+    base_on = 'summary'
 
     if request.method == 'POST':
         feed_url = request.form.get('feed_url', '').strip()
+        base_on = request.form.get('base_on', 'samenvatting')
 
         if feed_url:
-            result = parse_rss_feed(feed_url)
+            result = parse_rss_feed(feed_url, base_on)
 
             if result['success']:
                 articles = result['articles']
@@ -27,5 +29,5 @@ def index():
     return render_template('index.html',
                          articles=articles,
                          feed_url=feed_url,
-                         feed_title=feed_title)
-
+                         feed_title=feed_title,
+                         base_on=base_on)

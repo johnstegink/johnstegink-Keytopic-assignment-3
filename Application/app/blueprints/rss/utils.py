@@ -2,8 +2,21 @@ import feedparser
 import requests
 from datetime import datetime
 
+from app.blueprints.rss.ai import create_newtitle
 
-def parse_rss_feed(feed_url):
+
+def desensationalize_title(title, summary, base_on='summary'):
+    """
+    Returns a desensationalized title.
+    """
+
+    base_on_title = base_on=="title"
+
+
+    return create_newtitle(title, summary, base_on_title)
+
+
+def parse_rss_feed(feed_url, base_on='samenvatting'):
     """
     Parse an RSS feed and extract article information
 
@@ -69,6 +82,7 @@ def parse_rss_feed(feed_url):
 
             article = {
                 'title': entry.get('title', 'Geen titel'),
+                'desensationalized_title': desensationalize_title(entry.get('title', ''), summary, base_on),
                 'link': entry.get('link', '#'),
                 'summary': summary,
                 'published': published,
@@ -98,4 +112,3 @@ def parse_rss_feed(feed_url):
             'success': False,
             'error': f'Er is een fout opgetreden: {str(e)}'
         }
-

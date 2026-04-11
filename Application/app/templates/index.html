@@ -16,6 +16,19 @@
                 value="{{ feed_url }}"
                 required
             >
+        </div>
+        <div class="form-group" style="margin-top: 15px;">
+            <p style="margin-bottom: 5px;">De-Sensationaliseerde titel baseren op:</p>
+            <label>
+                <input type="radio" name="base_on" value="summary" {% if base_on != 'title' %}checked{% endif %} onchange="this.form.submit()">
+                Samenvatting
+            </label>
+            <label style="margin-right: 15px;">
+                <input type="radio" name="base_on" value="title" {% if base_on == 'title' %}checked{% endif %} onchange="this.form.submit()">
+                Titel
+            </label>
+        </div>
+        <div class="form-group" style="margin-top: 15px;">
             <button type="submit" class="btn btn-primary">Feed ophalen</button>
         </div>
     </form>
@@ -53,7 +66,7 @@
         <div class="article-content">
             <h3 class="article-title">
                 <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer">
-                Gedesensationaliseerde titel komt hier
+                {{ article.desensationalized_title }}
                 </a>
             </h3>
 
@@ -87,4 +100,3 @@
 {% endif %}
 
 {% endblock %}
-
