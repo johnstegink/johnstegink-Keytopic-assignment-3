@@ -13,6 +13,12 @@ def desensationalize_title(title, summary, base_on='summary'):
     base_on_title = base_on=="title"
 
 
+
+
+
+    base_on_title = True
+
+
     return create_newtitle(title, summary, base_on_title)
 
 
