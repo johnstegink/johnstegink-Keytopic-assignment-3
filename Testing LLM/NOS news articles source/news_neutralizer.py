@@ -103,7 +103,6 @@ def ollama_neutralizer(title, model_name="mistral"):
     Now process this input:
     Input: "{title}"
     Output:"""
-
     try:
         response = ollama.chat(model=model_name, messages=[
             {'role': 'system', 'content': system_instruction},
